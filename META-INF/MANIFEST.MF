@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main_Server-Class: Main_Server
+
