@@ -335,7 +335,16 @@ public abstract class IBASpectrumSimulator {
             projectile.setE(Eb);
             double Sf = calculateStopping(stoppingCalculator, input, projectile, layer, layerIndex, EMin, dE, S);
             double str2_Bohr = 0.26 * Math.pow(projectile.getZ(), 2) * Z2 * brickThickness / thicknessConversionFactor;
-            double str2_B = Math.pow(Sf / Si, 2) * str2_F + str2_Bohr;
+
+            double EM;
+            double H = 1.0;
+
+            if (input.calculationSetup.stragglingMode == StragglingMode.CHU) {
+                EM = (Ef+Eb) / (2.0 * projectile.getM());
+                H = Chu_Straggling.getHFactor(Z2, EM);
+            }
+
+            double str2_B = Math.pow(Sf / Si, 2) * str2_F + H * str2_Bohr;
             str2_F = str2_B;
 
             double str2_B_prime = K * K * str2_B;
@@ -348,7 +357,13 @@ public abstract class IBASpectrumSimulator {
             projectile.setE(Ef_prime);
             Sf  = calculateStopping(stoppingCalculator, input, projectile, layer, layerIndex, EMin, dE, S);
             Sf /= thicknessConversionFactor;
-            double str2_F_prime = Math.pow(Sf / Si, 2) * str2_B_prime + str2_Bohr;
+
+            if (input.calculationSetup.stragglingMode == StragglingMode.CHU) {
+                EM = (Ef+Eb) / (2.0 * projectile.getM());
+                H = Chu_Straggling.getHFactor(Z2, EM);
+            }
+
+            double str2_F_prime = Math.pow(Sf / Si, 2) * str2_B_prime + H * str2_Bohr;
 
             for (int j = brickIndex - 1; j >= 0; j--) {
                 Eb_prime = Ef_prime;
@@ -363,7 +378,13 @@ public abstract class IBASpectrumSimulator {
                 Sf /= thicknessConversionFactor2;
                 str2_Bohr  = 0.26 * Math.pow(projectile.getZ(), 2) * Z2 * brickThicknesses[j];
                 str2_Bohr /= thicknessConversionFactor2;
-                str2_F_prime = Math.pow(Sf / Si, 2) * str2_F_prime + str2_Bohr;
+
+                if (input.calculationSetup.stragglingMode == StragglingMode.CHU) {
+                    EM = (Ef+Eb) / (2.0 * projectile.getM());
+                    H = Chu_Straggling.getHFactor(Z2, EM);
+                }
+
+                str2_F_prime = Math.pow(Sf / Si, 2) * str2_F_prime + H * str2_Bohr;
             }
 
             isotopeFitData.straggling[(int) channel] = str2_F_prime;

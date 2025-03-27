@@ -181,6 +181,10 @@ public class MainWindow extends JFrame implements Observer {
                 int endChannel = deParameter.endCH;
                 double[] simulatedSpectrum = simulatorOutput.spectra.get(0).data;
 
+                //System.out.println(experimentalSpectrum.length);
+                //System.out.println(startChannel);
+                //System.out.println(endChannel);
+
                 double fitness = FitnessCalculator.calcFitness(detectorSetup, startChannel, endChannel, simulatedSpectrum, experimentalSpectrum);
                 lbl_fitness.setText(Helper.dblToDecStr(fitness, 2));
 
@@ -550,6 +554,7 @@ public class MainWindow extends JFrame implements Observer {
             if (ch_min >= length) {
                 ch_min = 0;
                 tf_ch_min.setText("" + ch_min);
+                deParameter.startCH = ch_min;
             }
 
             if (ch_max >= length) {
@@ -557,6 +562,8 @@ public class MainWindow extends JFrame implements Observer {
                 ch_max = length - 1;
                 tf_ch_min.setText("" + ch_min);
                 tf_ch_max.setText("" + ch_max);
+                deParameter.startCH = ch_min;
+                deParameter.endCH = ch_max;
             }
 
             calculationSetup.numberOfChannels = length;
@@ -1556,7 +1563,7 @@ public class MainWindow extends JFrame implements Observer {
 
     private void initComponents() {
 
-        this.setTitle("Ruthelde V8.04 - 2025_02_12 (C) R. Heller");
+        this.setTitle("Ruthelde V8.05 - 2025_03_27 (C) R. Heller");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(rootPanel);
         pack();
@@ -1849,6 +1856,9 @@ public class MainWindow extends JFrame implements Observer {
         });
 
         setLastFolder(lastFolder);
+
+        tf_ch_min.setText("" + (int) deParameter.startCH);
+        tf_ch_max.setText("" + (int) deParameter.endCH);
     }
 
     private void buildMenu() {

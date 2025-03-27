@@ -14,3 +14,7 @@
 - 2025_02_12: Added more digits to correction factor in DE status window
 - 2025_02_12: Removed plots from simulation output file
 - 2025_02_12: Changed format of experimental spectrum in optimizer and ms_optimizer input to be the same as in simulation file
+
+#### V8.05
+
+- 2025_03_26: Implemented Chu-straggling
