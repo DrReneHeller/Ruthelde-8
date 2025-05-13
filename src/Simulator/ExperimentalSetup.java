@@ -7,6 +7,8 @@ import java.io.Serializable;
 public class ExperimentalSetup implements Serializable {
 
     private final static double DEFAULT_E0         = 1700.0d ;
+    private final static double DEFAULT_MIN_E0     = 0.0d    ;
+    private final static double DEFAULT_MAX_E0     = 0.0d    ;
     private final static double DEFAULT_DELTA_E0   = 0.0d    ;
     private final static double DEFAULT_ALPHA      = 0.0d    ;
     private final static double DEFAULT_THETA      = 170.0d  ;
@@ -15,6 +17,8 @@ public class ExperimentalSetup implements Serializable {
     private final static double DEFAULT_MAX_CHARGE = 25.0d   ;
 
     private double     E0         ; //keV
+    private double     minE0      ; //keV
+    private double     maxE0      ; //keV
     private double     deltaE0    ; //keV
     private double     alpha      ;
     private double     theta      ;
@@ -28,6 +32,8 @@ public class ExperimentalSetup implements Serializable {
     public ExperimentalSetup() {
 
         this.setE0(DEFAULT_E0);
+        this.setMinE0(DEFAULT_MIN_E0);
+        this.setMaxE0(DEFAULT_MAX_E0);
         this.setDeltaE0(DEFAULT_DELTA_E0);
         this.setAlpha(DEFAULT_ALPHA);
         this.setTheta(DEFAULT_THETA);
@@ -50,8 +56,24 @@ public class ExperimentalSetup implements Serializable {
         if (E0 > 0.0d) this.E0 = E0;
     }
 
+    public void setMinE0(double minE0) {
+        this.minE0 = minE0;
+    }
+
+    public void setMaxE0(double maxE0) {
+        this.maxE0 = maxE0;
+    }
+
     public double getE0() {
         return this.E0;
+    }
+
+    public double getMinE0() {
+        return this.minE0;
+    }
+
+    public double getMaxE0() {
+        return this.maxE0;
     }
 
     public void setDeltaE0(double deltaE0) {
@@ -136,6 +158,8 @@ public class ExperimentalSetup implements Serializable {
         ExperimentalSetup result = new ExperimentalSetup();
 
         result.setE0(this.E0);
+        result.setMinE0(this.minE0);
+        result.setMaxE0(this.maxE0);
         result.setDeltaE0(this.deltaE0);
         result.setAlpha(this.alpha);
         result.setTheta(this.theta);

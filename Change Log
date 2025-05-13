@@ -18,3 +18,7 @@
 #### V8.05
 
 - 2025_03_26: Implemented Chu-straggling
+
+#### V8.06
+
+- 2025_05_13: Implemented primary beam optimization

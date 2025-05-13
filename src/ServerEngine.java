@@ -126,6 +126,7 @@ public class ServerEngine {
                                 output.factor     = individual.getCalibrationFactor()    ;
                                 output.offset     = individual.getCalibrationOffset()    ;
                                 output.resolution = individual.getResolution()           ;
+                                output.E0         = individual.getE0()                   ;
                                 if (individual.getCorrectionFactors() != null){
                                     int numCF = individual.getCorrectionFactors().length;
                                     output.correctionFactors = new double[numCF];

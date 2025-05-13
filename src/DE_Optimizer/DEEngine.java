@@ -278,6 +278,7 @@ public class DEEngine {
             io.detectorCalibration = best.getDetectorCalibration();
             io.charge = best.getCharge();
             io.resolution = best.getResolution();
+            io.E0 = best.getE0();
 
             if (plotRefresh) {
 

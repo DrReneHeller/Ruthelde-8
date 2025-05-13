@@ -33,6 +33,7 @@ public final class KinematicsCalculator {
         if (csde.loadFromFile(fileName)) crossSectionData.add(csde);
     }
 
+
     public static void clearCrossSectionData(){
         crossSectionData = new LinkedList<>();
     }
@@ -234,12 +235,21 @@ public final class KinematicsCalculator {
         int crossSectionListEntryIndex = -1;
         int tmp = 0;
 
-        for (CrossSectionData csd : crossSectionData){
-            if (Z1 == csd.Z1 && (int)M1 == (int)csd.M1 && Z2 == csd.Z2 && (int)M2 == (int)csd.M2){
-                crossSectionListEntryIndex = tmp;
-                break;
+        if (crossSectionData != null && !crossSectionData.isEmpty()) {
+
+            try {
+
+                for (CrossSectionData csd : crossSectionData) {
+                    if (Z1 == csd.Z1 && (int) M1 == (int) csd.M1 && Z2 == csd.Z2 && (int) M2 == (int) csd.M2) {
+                        crossSectionListEntryIndex = tmp;
+                        break;
+                    }
+                    tmp++;
+                }
+            } catch (Exception ex){
+                System.out.println("Error accessing cross section data.");
+                crossSectionListEntryIndex = -1;
             }
-            tmp++;
         }
 
         //Calculate screening factor

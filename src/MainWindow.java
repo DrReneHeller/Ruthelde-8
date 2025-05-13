@@ -230,6 +230,7 @@ public class MainWindow extends JFrame implements Observer {
                     simulatorInput.target               = iop.target                      ;
                     simulatorInput.experimentalSetup    = experimentalSetup.getDeepCopy() ;
                     simulatorInput.experimentalSetup.setCharge(iop.charge)                ;
+                    simulatorInput.experimentalSetup.setE0(iop.E0)                        ;
 
                     if (iop.correctionFactors != null){
                         int sizeCF = iop.correctionFactors.length;
@@ -1528,6 +1529,7 @@ public class MainWindow extends JFrame implements Observer {
         targetModel.setTargetSilent(optimizerOutput.target.getDeepCopy());
         targetView.updateTarget();
         experimentalSetup.setCharge(optimizerOutput.charge);
+        experimentalSetup.setE0(optimizerOutput.E0);
         detectorSetup.setResolution(optimizerOutput.resolution);
         detectorSetup.setCalibrationFactor(optimizerOutput.factor);
         detectorSetup.setCalibrationOffset(optimizerOutput.offset);
@@ -1547,6 +1549,7 @@ public class MainWindow extends JFrame implements Observer {
         tfDetCalOffset.setText(Helper.dblToDecStr(optimizerOutput.offset, 2));
         tfExpCharge.setText(Helper.dblToDecStr(optimizerOutput.charge, 4));
         tfDetDE.setText(Helper.dblToDecStr(optimizerOutput.resolution, 4));
+        tfExpE0.setText(Helper.dblToDecStr(optimizerOutput.E0, 2));
 
         setExpCharge();
         blockEvents = false;
@@ -1563,7 +1566,7 @@ public class MainWindow extends JFrame implements Observer {
 
     private void initComponents() {
 
-        this.setTitle("Ruthelde V8.05 - 2025_03_27 (C) R. Heller");
+        this.setTitle("Ruthelde V8.06 - 2025_05_13 (C) R. Heller");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(rootPanel);
         pack();

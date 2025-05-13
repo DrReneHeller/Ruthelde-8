@@ -15,7 +15,7 @@ public class Individual {
 
     private Target target;
     private final DetectorCalibration detectorCalibration;
-    private double charge, resolution;
+    private double charge, resolution, E0;
     private double fitness;
     private SimulatorOutput simulatorOutput;
     private CorrectionFactorEntry[] correctionFactors;
@@ -40,6 +40,7 @@ public class Individual {
         if (q > charge_max) q = charge_max;
         if (q < charge_min) q = charge_min;
         this.charge = q;
+        this.E0 = input.experimentalSetup.getE0();
 
         double res_min = input.detectorSetup.getMinRes();
         double res_max = input.detectorSetup.getMaxRes();
@@ -47,6 +48,18 @@ public class Individual {
         if (res > res_max) res = res_max;
         if (res < res_min) res = res_min;
         this.resolution = res;
+
+        double minE0 = input.experimentalSetup.getMinE0();
+        double maxE0 = input.experimentalSetup.getMaxE0();
+        if (minE0 != 0 && maxE0 != 0){
+            if (minE0 < E0 && maxE0 > E0){
+
+                double E0_ = input.experimentalSetup.getE0() * (1.0d - strength/2.0d + rand.nextDouble()*strength);
+                if(E0_ > maxE0) E0_ = maxE0;
+                if(E0_ < minE0) E0_ = minE0;
+                this.E0 = E0_;
+            }
+        }
 
         if (input.calculationSetup.correctionFactors != null){
 
@@ -70,7 +83,6 @@ public class Individual {
                 }
             } else this.correctionFactors = new CorrectionFactorEntry[0];
         } else this.correctionFactors = null;
-
     }
 
     public SimulatorOutput simulate(){
@@ -81,6 +93,7 @@ public class Individual {
 
         simulatorInput.experimentalSetup = input.experimentalSetup.getDeepCopy();
         simulatorInput.experimentalSetup.setCharge(charge);
+        simulatorInput.experimentalSetup.setE0(E0);
 
         simulatorInput.detectorSetup = input.detectorSetup.getDeepCopy();
         simulatorInput.detectorSetup.setCalibration(detectorCalibration);
@@ -128,6 +141,14 @@ public class Individual {
 
     public double getCharge() {
         return charge;
+    }
+
+    public void setE0(double E0){
+        this.E0 = E0;
+    }
+
+    public double getE0(){
+        return E0;
     }
 
     public void setResolution(double resolution){this.resolution = resolution;}
@@ -228,6 +249,16 @@ public class Individual {
             }
         }
 
+        //Beam energy
+        double minE0 = input.experimentalSetup.getMinE0();
+        double maxE0 = input.experimentalSetup.getMaxE0();
+        if (minE0 != 0 && maxE0 != 0){
+            double E0_ = input.experimentalSetup.getE0();
+            if (minE0 < E0_ && maxE0 > E0_){
+                genes.add(new Gene(minE0, maxE0, E0));
+            }
+        }
+
         return genes;
     }
 
@@ -271,6 +302,13 @@ public class Individual {
                 geneIndex++;
             }
         }
+
+        //Beam energy
+        double minE0 = input.experimentalSetup.getMinE0();
+        double maxE0 = input.experimentalSetup.getMaxE0();
+        if (minE0 != 0 && maxE0 != 0){
+            E0 = genes.get(geneIndex).val;
+        }
     }
 
     public void replace(Individual individual){
@@ -286,6 +324,7 @@ public class Individual {
 
         result.setTarget(target.getDeepCopy());
         result.setCharge(charge);
+        result.setE0(E0);
         result.setResolution(resolution);
         result.setDetectorCalibration(detectorCalibration);
         result.setFitness(fitness);
@@ -325,15 +364,23 @@ public class Individual {
         sb.append("Cal.-Offset \t = ").append(Helper.dblToDecStr(detectorCalibration.getOffset(), 4)).append("\r\n\n\r");
 
         if (correctionFactors != null){
-            sb.append("Corr.-Factor(s) \t : ");
-            for (CorrectionFactorEntry cfe : correctionFactors){
-                sb.append("  [");
-                sb.append(cfe.Z);
-                sb.append("]-");
-                sb.append(Helper.dblToDecStr(cfe.correctionFactor, 4));
+            if (correctionFactors.length > 0) {
+                sb.append("Corr.-Factor(s) \t : ");
+                for (CorrectionFactorEntry cfe : correctionFactors) {
+                    sb.append("  [");
+                    sb.append(cfe.Z);
+                    sb.append("]-");
+                    sb.append(Helper.dblToDecStr(cfe.correctionFactor, 4));
+                }
             }
-            sb.append("\r\n\n\r");
         }
+
+        if (input.experimentalSetup.getMinE0() != 0 && input.experimentalSetup.getMaxE0() != 0){
+            sb.append("E0 \t = ");
+            sb.append(Helper.dblToDecStr(E0, 2));
+        }
+
+        sb.append("\r\n\n\r");
 
         Target temp = target.getDeepCopy();
         temp.getInfo(sb);

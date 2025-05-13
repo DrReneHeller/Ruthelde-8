@@ -12,7 +12,7 @@ public class IntermediateOptimizerOutput {
     public double bestFitness, avrFitness;
     public boolean refreshPlot;
     public Target target;
-    public double resolution, charge;
+    public double resolution, charge, E0;
     public DetectorCalibration detectorCalibration;
     public double[] correctionFactors;
 
