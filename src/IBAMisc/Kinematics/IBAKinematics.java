@@ -120,7 +120,7 @@ public class IBAKinematics extends JFrame {
         if (BSA) {
             projectile.setE(E0Prime);
             E1 = KinematicsCalculator.getBSEnergyA(projectile, M2, theta);
-            if (E1 > 0.0d) sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, input.screeningMode, 0);
+            if (E1 > 0.0d) sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, input.screeningMode, 0, input.crossSectionData);
             else sigma = 0.0d;
 
             projectile.setE(E1);
@@ -142,7 +142,7 @@ public class IBAKinematics extends JFrame {
                 projectile.setE(E0Prime);
                 E1 = KinematicsCalculator.getBSEnergyB(projectile, M2, theta);
                 if (E1 > 0.0d)
-                    sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, input.screeningMode, 1);
+                    sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, input.screeningMode, 1, input.crossSectionData);
                 else sigma = 0.0d;
 
                 projectile.setE(E1);

@@ -68,7 +68,6 @@ public class MainWindow extends JFrame implements Observer {
     private final FitnessPlotter fitnessPlotter;
     private RutheldeSettings rutheldeSettings;
     private ReportGenerator reportGenerator;
-    private String[] availableCrossSections;
     //private final Logger LOG;
 
 
@@ -289,11 +288,6 @@ public class MainWindow extends JFrame implements Observer {
             clientEngine.requestCrossSectionFileList();
         }
 
-        if (arg.equals("CROSS-SECTION-FILE-LIST")){
-
-            availableCrossSections = clientEngine.getCrossSectionFileList();
-        }
-
         if (arg.equals(TARGET_NOTIFICATION)) {
 
             updateOpenPlotWindows();
@@ -367,9 +361,8 @@ public class MainWindow extends JFrame implements Observer {
         }
 
         input.stoppingData = path;
-
+        input.crossSectionData = calculationSetup.crossSectionData;
         stoppingPlotWindow.setInput(input);
-
     }
 
     private void updateDepthCalculation() {
@@ -750,10 +743,12 @@ public class MainWindow extends JFrame implements Observer {
                             calculationSetup     = df.calculationSetup.getDeepCopy();
                             deParameter          = df.deParameter;
 
+                            /*
                             if (df.calculationSetup.crossSectionData != null && df.calculationSetup.crossSectionData.length > 0) {
                                 for (String path : df.calculationSetup.crossSectionData)
                                     KinematicsCalculator.addCrossSectionData(path);
                             }
+                            */
 
                             tfExpE0.setText(Helper.dblToDecStr(df.experimentalSetup.getE0(), 2));
                             tfExpDE0.setText(Helper.dblToDecStr(df.experimentalSetup.getDeltaE0(), 2));
@@ -2057,61 +2052,41 @@ public class MainWindow extends JFrame implements Observer {
         pb_add_cross_section = new JButton();
         pb_add_cross_section.addActionListener(e -> {
 
-            if (availableCrossSections != null && availableCrossSections.length > 0) {
+            File file = null;
+            final JFileChooser fc;
+            if (lastFolder != null) fc = new JFileChooser(lastFolder);
+            else fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(this);
 
-                JComboBox list = new JComboBox<>();
-                DefaultComboBoxModel dml = new DefaultComboBoxModel();
-                for (String fileName : availableCrossSections) dml.addElement(fileName);
-                list.setModel(dml);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-                Object[] message = {
-                        "Available Cross Section Files:", list
-                };
+                file = fc.getSelectedFile();
+                lastFolder = fc.getSelectedFile().getParent();
+                setLastFolder(lastFolder);
 
-                int option = JOptionPane.showConfirmDialog(null, message, "Select cross cection file to add", JOptionPane.OK_CANCEL_OPTION);
-                if (option == JOptionPane.OK_OPTION) {
+                CrossSectionData crossSectionData = new CrossSectionData();
 
-                    String fileName = availableCrossSections[list.getSelectedIndex()];
-                    String[] crossSectionData;
+                if (crossSectionData.loadFromFile(file)){
 
-                    if (calculationSetup.crossSectionData == null) {
-
-                        crossSectionData = new String[1];
-                        crossSectionData[0] = fileName;
-                    } else {
-
-                        crossSectionData = new String[calculationSetup.crossSectionData.length+1];
-                        crossSectionData[calculationSetup.crossSectionData.length] = fileName;
-                        int index = 0;
-                        for (String name : calculationSetup.crossSectionData){
-                            crossSectionData[index] = name;
-                            index++;
-                        }
-                    }
-
-                    calculationSetup.crossSectionData = crossSectionData;
-                    //for (String name : calculationSetup.crossSectionData) System.out.println(name);
+                    if (calculationSetup.crossSectionData == null) calculationSetup.crossSectionData = new LinkedList<>();
+                    calculationSetup.crossSectionData.add(crossSectionData.getDeepCopy());
                     updateOpenPlotWindows();
+
+                } else {
+
+                    System.out.println("Error loading cross section file.");
                 }
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        null,
-                        "No R33 files found in folder \"CrossSectionFiles\" on server.",
-                        "No files found",
-                        JOptionPane.INFORMATION_MESSAGE);
             }
-
         });
 
         pb_show_cross_sections = new JButton();
         pb_show_cross_sections.addActionListener(e -> {
 
-            if (calculationSetup.crossSectionData != null && calculationSetup.crossSectionData.length > 0){
+            if (calculationSetup.crossSectionData != null && !calculationSetup.crossSectionData.isEmpty()){
 
                 String names = "";
-                for (String name : calculationSetup.crossSectionData){
-                    names += name + "\n";
+                for (CrossSectionData crossSectionData : calculationSetup.crossSectionData){
+                    names += crossSectionData.name + "\n";
                 }
 
                 JOptionPane.showMessageDialog(
@@ -2132,10 +2107,9 @@ public class MainWindow extends JFrame implements Observer {
 
         pb_clear_cross_sections = new JButton();
         pb_clear_cross_sections.addActionListener(e -> {
-            calculationSetup.crossSectionData = new String[0];
+            calculationSetup.crossSectionData = new LinkedList<>();
             updateOpenPlotWindows();
         });
-
     }
 
     private void debugMsg(String msg){

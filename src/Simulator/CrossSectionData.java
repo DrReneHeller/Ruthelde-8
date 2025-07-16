@@ -22,7 +22,7 @@ public class CrossSectionData {
     public CrossSectionData(){
     }
 
-    public boolean loadFromFile(String filename){
+    public boolean loadFromFile(File file){
 
         String currentLine, temp;
         BufferedReader inputBuffer;
@@ -31,8 +31,6 @@ public class CrossSectionData {
         boolean foundStartOfData = false;
         boolean foundUnit = false;
         boolean status = false;
-
-        File file = new File(filename);
 
         try {
             if (file != null && file.exists() && file.isFile() && file.canRead()) {
@@ -117,7 +115,9 @@ public class CrossSectionData {
 
             } else {
 
-                System.out.println("Error, file does not exist.");
+                System.out.print ("Error, file does not exist: ");
+                System.out.println (file.getPath());
+
             }
         } catch (Exception ex) {
 
@@ -150,5 +150,28 @@ public class CrossSectionData {
         }
 
         return status;
+    }
+
+    public CrossSectionData getDeepCopy(){
+
+        CrossSectionData crossSectionData = new CrossSectionData();
+
+        crossSectionData.Z1 = this.Z1;
+        crossSectionData.Z2 = this.Z2;
+        crossSectionData.M1 = this.M1;
+        crossSectionData.M2 = this.M2;
+        crossSectionData.theta = this.theta;
+        crossSectionData.E_start = this.E_start;
+        crossSectionData.E_end = this.E_end;
+        crossSectionData.name = this.name;
+        crossSectionData.rr = this.rr;
+
+        crossSectionData.energies = new double[this.energies.length];
+        System.arraycopy(this.energies,0,crossSectionData.energies,0,this.energies.length);
+
+        crossSectionData.crossSections = new double[this.crossSections.length];
+        System.arraycopy(this.crossSections, 0, crossSectionData.crossSections, 0, this.crossSections.length);
+
+        return crossSectionData;
     }
 }

@@ -1,7 +1,10 @@
 package Simulator.CalculationSetup;
 
 import DE_Optimizer.CorrectionFactorEntry;
+import Simulator.CrossSectionData;
 import Simulator.Stopping.*;
+
+import java.util.LinkedList;
 
 public class CalculationSetup {
 
@@ -15,23 +18,22 @@ public class CalculationSetup {
     private static final int                     DEFAULT_NUMBER_OF_CHANNELS       = 1024                          ;
 
     public StoppingCalculationMode stoppingPowerCalculationMode ;
-    public String stoppingData                                  ;
-    public String[] crossSectionData                            ;
-    public CorrectionFactorEntry[] correctionFactors          ;
+    public String                  stoppingData                 ;
+    public LinkedList<CrossSectionData> crossSectionData        ;
+    public CorrectionFactorEntry[] correctionFactors            ;
     public CompoundCalculationMode compoundCalculationMode      ;
     public ScreeningMode           screeningMode                ;
     public StragglingMode          stragglingMode               ;
     public ChargeFractionMode      chargeFractionMode           ;
     public int                     numberOfChannels             ;
     public boolean useLookUpTable, simulateIsotopes             ;
-
     public int ch_min, ch_max                                   ;
 
     public CalculationSetup() {
 
         this.stoppingPowerCalculationMode = DEFAULT_STOPPING_MODE            ;
         this.stoppingData                 = null                             ;
-        this.correctionFactors            = new CorrectionFactorEntry[0]   ;
+        this.correctionFactors            = new CorrectionFactorEntry[0]     ;
         this.compoundCalculationMode      = DEFAULT_COMPOUND_CORRECTION_MODE ;
         this.screeningMode                = DEFAULT_SCREENING_MODE           ;
         this.stragglingMode               = DEFAULT_STRAGGLING_MODE          ;
@@ -39,7 +41,7 @@ public class CalculationSetup {
         this.useLookUpTable               = DEFAULT_USE_LOOK_UP_TABLE        ;
         this.simulateIsotopes             = DEFAULT_SIMULATE_ISOTOPES        ;
         this.numberOfChannels             = DEFAULT_NUMBER_OF_CHANNELS       ;
-        this.crossSectionData             = new String[0]                    ;
+        this.crossSectionData             = null                             ;
         this.ch_min = 0;
         this.ch_max = 1023;
     }
@@ -78,8 +80,10 @@ public class CalculationSetup {
 
         if (this.crossSectionData != null)
         {
-            calculationSetup.crossSectionData = new String[this.crossSectionData.length];
-            System.arraycopy(this.crossSectionData, 0, calculationSetup.crossSectionData, 0, this.crossSectionData.length);
+            calculationSetup.crossSectionData = new LinkedList<>();
+            for (CrossSectionData cd : this.crossSectionData){
+                calculationSetup.crossSectionData.add(cd.getDeepCopy());
+            }
         } else {
             calculationSetup.crossSectionData = null;
         }

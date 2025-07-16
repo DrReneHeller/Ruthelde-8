@@ -2,10 +2,13 @@ package IBAMisc;
 
 import DE_Optimizer.CorrectionFactorEntry;
 import Simulator.CalculationSetup.ScreeningMode;
+import Simulator.CrossSectionData;
 import Simulator.Stopping.CompoundCalculationMode;
 import Simulator.Stopping.StoppingCalculationMode;
 import Simulator.Target.Projectile;
 import Simulator.Target.Target;
+
+import java.util.LinkedList;
 
 public class IBAMiscInput {
 
@@ -23,6 +26,7 @@ public class IBAMiscInput {
     public CompoundCalculationMode compoundCalculationMode;
     public ScreeningMode screeningMode;
     public CorrectionFactorEntry[] correctionFactors;
+    public LinkedList<CrossSectionData> crossSectionData;
 
     public IBAMiscInput(){
 
@@ -34,6 +38,7 @@ public class IBAMiscInput {
         screeningMode = ScreeningMode.ANDERSON;
         projectile = new Projectile();
         correctionFactors = null;
+        crossSectionData = null;
 
         alpha = 0.0d;
         theta = 170.0d;

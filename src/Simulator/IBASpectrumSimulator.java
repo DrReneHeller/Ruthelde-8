@@ -51,12 +51,6 @@ public abstract class IBASpectrumSimulator {
             isotopeList = generateSimplifiedIsotopeList(input);
         }
 
-        //Load in cross-section files if necessary
-        if (input.calculationSetup.crossSectionData == null || input.calculationSetup.crossSectionData.length < 1) {
-            KinematicsCalculator.clearCrossSectionData();
-        }
-        for (String path : input.calculationSetup.crossSectionData) KinematicsCalculator.addCrossSectionData(path);
-
         //Simulate all spectra
         int tempZ = 0;
         for (IsotopeFitData isotopeFitData : isotopeList) {
@@ -218,7 +212,7 @@ public abstract class IBASpectrumSimulator {
             double AD = brickThickness / thicknessConversionFactor * 1000.0;
             projectile.setE(E);
             ScreeningMode screeningMode = input.calculationSetup.screeningMode;
-            double sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, screeningMode, 0);
+            double sigma = KinematicsCalculator.getBSCrossSection(projectile, Z2, M2, theta, screeningMode, 0, input.calculationSetup.crossSectionData);
             double Y_brick = 6.24E-3 * Q * AD * sigma * omega * c / Math.cos(Math.toRadians(alpha));
 
             if (channel < input.calculationSetup.numberOfChannels-1 && channel >= 0) {

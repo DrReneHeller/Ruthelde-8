@@ -74,14 +74,6 @@ public class ServerEngine {
                         path = makeAbsolutePath(simulatorInput.calculationSetup.stoppingData, "StoppingData");
                         simulatorInput.calculationSetup.stoppingData = path;
 
-                        if (simulatorInput.calculationSetup.crossSectionData != null){
-                            int numEntries = simulatorInput.calculationSetup.crossSectionData.length;
-                            for (int i=0; i<numEntries; i++){
-                                path = makeAbsolutePath(simulatorInput.calculationSetup.crossSectionData[i], "CrossSectionData");
-                                simulatorInput.calculationSetup.crossSectionData[i] = path;
-                            }
-                        }
-
                         SimulatorOutput simulatorOutput = IBASpectrumSimulator.simulate(simulatorInput);
                         gson = new GsonBuilder().setPrettyPrinting().create();
                         try {
@@ -99,14 +91,6 @@ public class ServerEngine {
 
                         path = makeAbsolutePath(input.calculationSetup.stoppingData, "StoppingData");
                         input.calculationSetup.stoppingData = path;
-
-                        if (input.calculationSetup.crossSectionData != null){
-                            int numEntries = input.calculationSetup.crossSectionData.length;
-                            for (int i=0; i<numEntries; i++){
-                                path = makeAbsolutePath(input.calculationSetup.crossSectionData[i], "CrossSectionData");
-                                input.calculationSetup.crossSectionData[i] = path;
-                            }
-                        }
 
                         deEngineWorker = new DEEngineWorker(input, pw);
 
@@ -165,14 +149,6 @@ public class ServerEngine {
 
                         path = makeAbsolutePath(ms_input.calculationSetup.stoppingData, "StoppingData");
                         ms_input.calculationSetup.stoppingData = path;
-
-                        if (ms_input.calculationSetup.crossSectionData != null){
-                            int numEntries = ms_input.calculationSetup.crossSectionData.length;
-                            for (int i=0; i<numEntries; i++){
-                                path = makeAbsolutePath(ms_input.calculationSetup.crossSectionData[i], "CrossSectionData");
-                                ms_input.calculationSetup.crossSectionData[i] = path;
-                            }
-                        }
 
                         //TODO: Put this into a different threat
                         //MS_OptimizerOutput ms_output = DEOptimizer.optimizeMS(ms_input, pw);

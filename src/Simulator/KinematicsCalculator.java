@@ -20,22 +20,9 @@ public final class KinematicsCalculator {
     private static StoppingCalculationMode stoppingPowerCalculationMode ;
     private static CompoundCalculationMode compoundCalculationMode      ;
 
-    public static LinkedList<CrossSectionData> crossSectionData = new LinkedList<>();
-
     public KinematicsCalculator() {
         setStoppingPowerCalculationMode(DEFAULT_STOPPING_MODE);
         setCompoundCalculationMode(DEFAULT_COMPOUND_MODE);
-    }
-
-    public static void addCrossSectionData(String fileName){
-
-        CrossSectionData csde = new CrossSectionData();
-        if (csde.loadFromFile(fileName)) crossSectionData.add(csde);
-    }
-
-
-    public static void clearCrossSectionData(){
-        crossSectionData = new LinkedList<>();
     }
 
     public static void setStoppingPowerCalculationMode(StoppingCalculationMode _stoppingPowerCalculationMode) {
@@ -215,7 +202,7 @@ public final class KinematicsCalculator {
     }
 
     public static double getBSCrossSection(Projectile projectile, int Z2, double M2, double theta,
-                                           ScreeningMode screeningMode, int index) {
+                                           ScreeningMode screeningMode, int index, LinkedList<CrossSectionData> crossSectionData) {
 
         //index determines which kinematic solution should be regarded
         //0 = positive solution / 1 = negative solution
@@ -240,7 +227,17 @@ public final class KinematicsCalculator {
             try {
 
                 for (CrossSectionData csd : crossSectionData) {
-                    if (Z1 == csd.Z1 && (int) M1 == (int) csd.M1 && Z2 == csd.Z2 && (int) M2 == (int) csd.M2) {
+
+                    if (Z1 == 2 && Z2==8) {
+                        System.out.println("Z1=" + Z1 + "_" + csd.Z1);
+                        System.out.println("Z2=" + Z2 + "_" + csd.Z2);
+                        System.out.println("M1=" + M1 + "_" + csd.M1);
+                        System.out.println("M2=" + M2 + "_" + csd.M2);
+                    }
+
+                    if (Z1 == csd.Z1 && (int) Math.round(M1) == (int) Math.round(csd.M1) && Z2 == csd.Z2 && (int) Math.round(M2) == (int) Math.round(csd.M2)) {
+
+                        System.out.println("Yes");
                         crossSectionListEntryIndex = tmp;
                         break;
                     }
