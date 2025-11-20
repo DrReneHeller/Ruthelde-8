@@ -19,4 +19,8 @@ public class IntermediateOptimizerOutput {
     public IntermediateOptimizerOutput(){
 
     }
+
+    public void print(){
+        System.out.println("" + generationCounter + " " + bestFitness + " " + avrFitness + " " + refreshPlot + " " + resolution + " " + charge + " " + E0 + " " + detectorCalibration.getFactor() + "" + detectorCalibration.getOffset());
+    }
 }

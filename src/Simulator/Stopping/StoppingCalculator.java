@@ -155,6 +155,7 @@ final public class StoppingCalculator {
 
         if (calcMode.equals(StoppingCalculationMode.PARA_FILE)){
 
+            /*
             double _s  = paraFile.data[Z2].params[0];
             double _p  = paraFile.data[Z2].params[1];
             double _a0 = paraFile.data[Z2].params[2];
@@ -169,6 +170,23 @@ final public class StoppingCalculator {
             double _b2 = paraFile.data[Z2].params[11];
             double _b3 = paraFile.data[Z2].params[12];
             double _f2 = paraFile.data[Z2].params[13];
+            */
+
+            double _f1 = paraFile.parameters[Z2].params[0];
+            double _s  = paraFile.parameters[Z2].params[1];
+            double _p  = paraFile.parameters[Z2].params[2];
+            double _a0 = paraFile.parameters[Z2].params[3];
+            double _a1 = paraFile.parameters[Z2].params[4];
+            double _a2 = paraFile.parameters[Z2].params[5];
+            double _a3 = paraFile.parameters[Z2].params[6];
+
+            double _f2 = paraFile.parameters[Z2].params[7];
+            double _q  = paraFile.parameters[Z2].params[8];
+            double _r  = paraFile.parameters[Z2].params[9];
+            double _b0 = paraFile.parameters[Z2].params[10];
+            double _b1 = paraFile.parameters[Z2].params[11];
+            double _b2 = paraFile.parameters[Z2].params[12];
+            double _b3 = paraFile.parameters[Z2].params[13];
 
             double EM = E0 / (M1*1000.0d);
 

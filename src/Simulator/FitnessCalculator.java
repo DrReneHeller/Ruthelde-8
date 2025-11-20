@@ -26,8 +26,8 @@ public abstract class FitnessCalculator {
             sigma2 += Math.pow(expSpectrum[i]-simSpectrum[i],2);
         }
 
-        //sigma2 = LFF / sigma2 * 100.0f;
-        sigma2 = Math.log(LFF) / Math.log(sigma2) * 100.0f;
+        sigma2 = LFF / sigma2 * 100.0f;
+        //sigma2 = Math.log(LFF) / Math.log(sigma2) * 100.0f;
 
         return sigma2;
     }

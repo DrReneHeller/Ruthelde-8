@@ -275,10 +275,10 @@ public class ReportGenerator {
                 if (elementIndex == 0) sb.append("<td>" + layerIndex + "</td>"); else sb.append("<td> </td>");
                 sb.append("<td>" + element.getName() + "</td>");
                 double elementRatio = element.getRatio();
-                String elementRatioStr = String.format("%.2f", elementRatio);
+                String elementRatioStr = String.format("%.3f", elementRatio);
                 sb.append("<td>" + elementRatioStr + "</td>");
                 double elementAD = element.getArealDensity();
-                String elementADStr = String.format("%.2f", elementAD);
+                String elementADStr = String.format("%.3f", elementAD);
                 sb.append("<td>" + elementADStr + "</td>");
                 sb.append("</tr>");
                 elementIndex++;
@@ -316,8 +316,8 @@ public class ReportGenerator {
         String imageFileName = "";
 
         if (file.getName().split("\\.").length > 1) imageFileName = file.getName().split("\\.")[0]; else imageFileName = file.getName();
-
         imageFileName = file.getParent() + "/" + imageFileName + ".png";
+
 
         plotWindow.saveImage(new File(imageFileName));
 
@@ -325,6 +325,9 @@ public class ReportGenerator {
                 "    <div class=\"section\">\n" +
                 "        <h2>Spectrum and Fit</h2>\n" +
                 "        <img src=\"");
+
+        if (file.getName().split("\\.").length > 1) imageFileName = file.getName().split("\\.")[0]; else imageFileName = file.getName();
+        imageFileName = imageFileName + ".png";
 
         sb.append(imageFileName);
 

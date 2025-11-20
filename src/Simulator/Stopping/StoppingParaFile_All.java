@@ -50,7 +50,7 @@ public class StoppingParaFile_All {
             stoppingParaFile.creation_time = stoppingParaFileAll.creation_time;
             stoppingParaFile.reference = stoppingParaFileAll.reference;
             stoppingParaFile.doi = stoppingParaFileAll.doi;
-            stoppingParaFile.z1 = z1;
+            //stoppingParaFile.z1 = z1;
 
             StoppingParaEntry[] stoppingParaEntries = new StoppingParaEntry[93];
 
@@ -64,7 +64,7 @@ public class StoppingParaFile_All {
                 stoppingParaEntries[z2].error_data.sigma_per_decade = stoppingParaFileAll.parameters[z1][z2].error_data.sigma_per_decade;
             }
 
-            stoppingParaFile.data = stoppingParaEntries;
+            stoppingParaFile.parameters = stoppingParaEntries;
 
             try {
                 String name = "StoppingData/SCS2024_01_GAS/SCS2024_01_GAS_Z1=" + z1 + ".json";

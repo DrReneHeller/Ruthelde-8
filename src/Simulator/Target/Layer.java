@@ -103,7 +103,7 @@ public class Layer implements Serializable {
 
     public void     normalizeElements() {
         calculateArealDensityAndElementRatios();
-        calculateMassDensity();
+        //calculateMassDensity();
     }
 
     public void     setElementRatio(int elementIndex, double ratio) {
@@ -455,7 +455,8 @@ public class Layer implements Serializable {
 
         result.setArealDensity(arealDensity);
         result.setConstrains(min_AD, max_AD);
-        result.calculateMassDensity();
+        //result.calculateMassDensity();
+        result.setMassDensity(massDensity);
 
         return result;
     }

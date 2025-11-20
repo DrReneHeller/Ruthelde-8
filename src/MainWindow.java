@@ -231,7 +231,10 @@ public class MainWindow extends JFrame implements Observer {
                     simulatorInput.experimentalSetup.setCharge(iop.charge)                ;
                     simulatorInput.experimentalSetup.setE0(iop.E0)                        ;
 
+                    /*
                     if (iop.correctionFactors != null){
+                        //System.out.println(iop.correctionFactors.length);
+                        //System.out.println(iop.correctionFactors[0]);
                         int sizeCF = iop.correctionFactors.length;
                         simulatorInput.correctionFactors = new CorrectionFactorEntry[sizeCF];
                         if (sizeCF > 0){
@@ -244,6 +247,8 @@ public class MainWindow extends JFrame implements Observer {
                             }
                         }
                     }
+
+                     */
 
                     simulatorInput.calculationSetup     = calculationSetup                ;
                     simulatorInput.detectorSetup        = detectorSetup.getDeepCopy()     ;
@@ -961,6 +966,7 @@ public class MainWindow extends JFrame implements Observer {
             reportGenerator.ds = detectorSetup;
             reportGenerator.target = targetModel.getTarget().getDeepCopy();
             reportGenerator.plotWindow = spectraPlotWindow;
+            reportGenerator.lastFolder = lastFolder;
             reportGenerator.generateReport();
         }
     }
@@ -1561,7 +1567,7 @@ public class MainWindow extends JFrame implements Observer {
 
     private void initComponents() {
 
-        this.setTitle("Ruthelde V8.06 - 2025_05_13 (C) R. Heller");
+        this.setTitle("Ruthelde V8.07 - 2025_07_16 (C) R. Heller");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(rootPanel);
         pack();
@@ -1589,10 +1595,6 @@ public class MainWindow extends JFrame implements Observer {
         fitnessPlotWindow = new PlotWindow("DE Fitness evolution");
         fitnessPlotWindow.getPlotGenerator().plotProperties.xAxisName = "Generation";
         fitnessPlotWindow.getPlotGenerator().plotProperties.yAxisName = "fitness";
-
-        //parameterPlotWindow = new PlotWindow("DE Fit Results");
-        //parameterPlotWindow.getPlotGenerator().plotProperties.xAxisName = "Generation";
-        //parameterPlotWindow.getPlotGenerator().plotProperties.yAxisName = "quantity";
 
         eaStatusWindow = new EAStatusWindow("DE Status");
 
@@ -1855,8 +1857,8 @@ public class MainWindow extends JFrame implements Observer {
 
         setLastFolder(lastFolder);
 
-        tf_ch_min.setText("" + (int) deParameter.startCH);
-        tf_ch_max.setText("" + (int) deParameter.endCH);
+        tf_ch_min.setText("" + deParameter.startCH);
+        tf_ch_max.setText("" + deParameter.endCH);
     }
 
     private void buildMenu() {

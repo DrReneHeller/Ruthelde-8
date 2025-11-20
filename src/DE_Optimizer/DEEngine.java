@@ -38,7 +38,7 @@ public class DEEngine {
     public void initialize(){
 
         processors = Runtime.getRuntime().availableProcessors();
-        //System.out.println("Available processors: " + processors);
+        System.out.println("Available processors: " + processors);
 
 
         int length = input.experimentalSpectrum.length;
@@ -53,6 +53,8 @@ public class DEEngine {
         totalTime = 0;
         lastMillis = System.currentTimeMillis();
         stop = false;
+
+        try {Thread.sleep(10);} catch (Exception e){}
     }
 
     public void reset(){
@@ -78,6 +80,8 @@ public class DEEngine {
     }
 
     public boolean evolve(){
+
+        //System.out.print("[");
 
         long currentMillis = System.currentTimeMillis();
         totalTime += currentMillis - lastMillis;
@@ -212,13 +216,21 @@ public class DEEngine {
             index++;
         }
 
-
         // Do all simulation work
         ExecutorService es = Executors.newFixedThreadPool(processors);
         List<Callable<Object>> simList = new ArrayList<>();
         for (Individual child : children) { simList.add(Executors.callable(new SimulationTask(child))); }
         try { es.invokeAll(simList, 20, TimeUnit.SECONDS); } catch (InterruptedException e) { e.printStackTrace(); }
         es.shutdownNow();
+
+        /*
+        try {
+            if (!es.awaitTermination(1000, TimeUnit.MILLISECONDS)) System.out.println("TimeOut");
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        */
+
         es = null;
         simList = null;
 
@@ -292,18 +304,25 @@ public class DEEngine {
                             io.correctionFactors[i] = best.getCorrectionFactors()[i].correctionFactor;
                         }
                     } else {
-                        io.correctionFactors = new double[0];
+                        io.correctionFactors = new double[1];
+                        io.correctionFactors[0] = 1.0d;
                     }
+
                 } else io.correctionFactors = null;
 
-                io.target = best.getTarget();
+                io.target = best.getTarget().getDeepCopy();
                 io.refreshPlot = true;
+
             } else {
                 io.target = null;
                 io.refreshPlot = false;
             }
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            try{Thread.sleep(20);} catch(Exception ex){ex.printStackTrace();}
+
+            //Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder().create();
+            if (Double.isNaN(io.avrFitness)) io.avrFitness = 0.0d;
             String outputStr = gson.toJson(io);
 
             try {
@@ -330,6 +349,8 @@ public class DEEngine {
         if (input.deParameter.endGeneration > 0 && generationCounter > input.deParameter.endGeneration-2) stop=true;
 
         generationCounter++;
+
+        //System.out.println("]");
 
         return stop;
     }

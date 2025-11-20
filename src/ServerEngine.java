@@ -118,13 +118,19 @@ public class ServerEngine {
                                         output.correctionFactors[i] = individual.getCorrectionFactors()[i].correctionFactor;
                                     }
                                 }
-                                output.fitness    = individual.getFitness()              ;
+                                output.fitness    = individual.getFitness();
+                                if (Double.isNaN(output.fitness)) output.fitness = 0.0d;
                                 output.optimizationTime = deEngineWorker.getDeEngine().getTotalTime()/1000.0d;
 
                                 Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
-                                String result = "DE-RESULT_" + gson2.toJson(output);
-                                ssw.send(result);
-                                try {Thread.sleep(20);} catch (Exception ex) {}
+                                try {
+                                    String result = "DE-RESULT_" + gson2.toJson(output);
+                                    ssw.send(result);
+                                } catch (Exception ex){
+                                    System.out.println("Server Engine: Error sending DE results to client.");
+                                    ex.printStackTrace();
+                                }
+                                try {Thread.sleep(20);} catch (Exception ex) {ex.printStackTrace();}
                             }
                         });
 

@@ -59,10 +59,15 @@ public class SocketClientWorker extends SwingWorker<Object, Object> {
                 String line = in.readLine();
                 StringBuilder sb = new StringBuilder();
 
-                while (!line.equals("End_Of_Transmission")){
+                if (line != null) {
+                    while (!error && !line.equals("End_Of_Transmission")) {
 
-                    sb.append(line + "\n\r");
-                    line = in.readLine();
+                        sb.append(line + "\n\r");
+                        line = in.readLine();
+                        if (line == null) error = true;
+                    }
+                } else {
+                    error = true;
                 }
 
                 result = sb.toString();

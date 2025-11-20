@@ -228,16 +228,8 @@ public final class KinematicsCalculator {
 
                 for (CrossSectionData csd : crossSectionData) {
 
-                    if (Z1 == 2 && Z2==8) {
-                        System.out.println("Z1=" + Z1 + "_" + csd.Z1);
-                        System.out.println("Z2=" + Z2 + "_" + csd.Z2);
-                        System.out.println("M1=" + M1 + "_" + csd.M1);
-                        System.out.println("M2=" + M2 + "_" + csd.M2);
-                    }
-
                     if (Z1 == csd.Z1 && (int) Math.round(M1) == (int) Math.round(csd.M1) && Z2 == csd.Z2 && (int) Math.round(M2) == (int) Math.round(csd.M2)) {
 
-                        System.out.println("Yes");
                         crossSectionListEntryIndex = tmp;
                         break;
                     }

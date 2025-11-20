@@ -8,8 +8,8 @@ import java.util.LinkedList;
 public class StoppingParaFile {
 
     public String creation_time, reference, doi;
-    public int z1;
-    public StoppingParaEntry[] data;
+    //public int z1;
+    public StoppingParaEntry[] parameters;
 
     public StoppingParaFile(){
 
@@ -17,7 +17,7 @@ public class StoppingParaFile {
 
     public StoppingParaFile(StoppingParaEntry[] data){
 
-        this.data = data;
+        this.parameters = data;
     }
 
     public static StoppingParaFile load(String fileName){
@@ -77,10 +77,10 @@ public class StoppingParaFile {
 
     public StoppingParaFile getDeepCopy(){
 
-        StoppingParaEntry[] new_data = new StoppingParaEntry[data.length];
+        StoppingParaEntry[] new_data = new StoppingParaEntry[parameters.length];
 
-        for (int i=0; i<data.length; i++){
-            new_data[i] = data[i].getDeepCopy();
+        for (int i=0; i<parameters.length; i++){
+            new_data[i] = parameters[i].getDeepCopy();
         }
 
         return new StoppingParaFile(new_data);
