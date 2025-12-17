@@ -26,6 +26,9 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -68,6 +71,7 @@ public class MainWindow extends JFrame implements Observer {
     private final FitnessPlotter fitnessPlotter;
     private RutheldeSettings rutheldeSettings;
     private ReportGenerator reportGenerator;
+    private Batch_Job batchJob;
     //private final Logger LOG;
 
 
@@ -142,6 +146,9 @@ public class MainWindow extends JFrame implements Observer {
         clientEngine.addObserver(this);
         clientEngine.connect(serverIP, 9090);
         clientEngine.requestStoppingFileList();
+
+        batchJob = new Batch_Job(null, null);
+        batchJob.active = false;
 
         debugMsg("System started");
 
@@ -275,8 +282,12 @@ public class MainWindow extends JFrame implements Observer {
 
                 refreshInputs(optimizerOutput);
                 updateSimulation();
-            }
 
+                if (batchJob.active) {
+                    writeBatchResults();
+                    processNextBatchEntry();
+                }
+            }
         }
 
         if (arg.equals("STOPPING-FILE-LIST")){
@@ -923,53 +934,155 @@ public class MainWindow extends JFrame implements Observer {
         if (!result) errorMsg("Could not load simulation file.");
     }
 
-    private void saveReport(){
+    private void saveReport(boolean showInputMask, boolean saveToDisk, File file){
 
-        JTextField tf_dateTime = new JTextField();
-        JTextField tf_sample = new JTextField();
-        JTextField tf_owner = new JTextField();
-        JTextField tf_measured = new JTextField();
-        JTextArea tf_remarks = new JTextArea();
+        if (showInputMask) {
 
-        Object[] message = {
-                "Date / Time:", tf_dateTime,
-                "Sample name:", tf_sample,
-                "Sample owner:", tf_owner,
-                "Measured by:", tf_measured,
-                "Remarks:", tf_remarks
-        };
+            JTextField tf_dateTime = new JTextField();
+            JTextField tf_sample = new JTextField();
+            JTextField tf_owner = new JTextField();
+            JTextField tf_measured = new JTextField();
+            JTextArea tf_remarks = new JTextArea();
 
-        Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateTime = formatter.format(date);
+            Object[] message = {
+                    "Date / Time:", tf_dateTime,
+                    "Sample name:", tf_sample,
+                    "Sample owner:", tf_owner,
+                    "Measured by:", tf_measured,
+                    "Remarks:", tf_remarks
+            };
 
-        tf_dateTime.setText(dateTime);
-        tf_remarks.setText("\n\n\n\n\n\n");
+            Date date = new Date(System.currentTimeMillis());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateTime = formatter.format(date);
 
-        if (reportGenerator != null){
-            tf_sample.setText(reportGenerator.sampleName);
-            tf_owner.setText(reportGenerator.sampleOwner);
-            tf_measured.setText(reportGenerator.measuredBy);
-            tf_remarks.setText(reportGenerator.remarks);
+            tf_dateTime.setText(dateTime);
+            tf_remarks.setText("\n\n\n\n\n\n");
+
+            if (reportGenerator != null) {
+                tf_sample.setText(reportGenerator.sampleName);
+                tf_owner.setText(reportGenerator.sampleOwner);
+                tf_measured.setText(reportGenerator.measuredBy);
+                tf_remarks.setText(reportGenerator.remarks);
+            }
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Report header information", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+
+                reportGenerator = new ReportGenerator();
+                reportGenerator.dateTime = tf_dateTime.getText();
+                reportGenerator.sampleName = tf_sample.getText();
+                reportGenerator.sampleOwner = tf_owner.getText();
+                reportGenerator.measuredBy = tf_measured.getText();
+                reportGenerator.remarks = tf_remarks.getText();
+            }
         }
 
-        int option = JOptionPane.showConfirmDialog(null, message, "Report header information", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
+        if (saveToDisk){
 
-            reportGenerator = new ReportGenerator();
-            reportGenerator.dateTime = tf_dateTime.getText();
-            reportGenerator.sampleName = tf_sample.getText();
-            reportGenerator.sampleOwner = tf_owner.getText();
-            reportGenerator.measuredBy = tf_measured.getText();
-            reportGenerator.remarks = tf_remarks.getText();
             reportGenerator.es = experimentalSetup;
             reportGenerator.ds = detectorSetup;
             reportGenerator.target = targetModel.getTarget().getDeepCopy();
             reportGenerator.plotWindow = spectraPlotWindow;
             reportGenerator.lastFolder = lastFolder;
-            reportGenerator.generateReport();
+            reportGenerator.generateReport(file);
         }
     }
+
+    private void startBatch(){
+
+        final JFileChooser fc;
+        if (lastFolder != null) fc = new JFileChooser(lastFolder);
+        else fc = new JFileChooser();
+        fc.setMultiSelectionEnabled(true);
+        int returnVal = fc.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION){
+
+            File[] files = fc.getSelectedFiles();
+            //for (File file : files) System.out.println(file.getName());
+
+            if (files != null && files.length > 0){
+
+                String batchFolder = files[0].getParent();
+                batchFolder += "/";
+                batchFolder += JOptionPane.showInputDialog(null, "Batch Folder Name");
+
+                try {
+                    Files.createDirectories(Paths.get(batchFolder));
+                    batchJob = new Batch_Job(files, batchFolder);
+                    saveReport(true,false, null);
+                    processNextBatchEntry();
+                } catch (IOException e) {
+                    System.out.println("Error creating folder for batch.");
+                }
+            }
+        }
+    }
+
+    private void processNextBatchEntry(){
+
+        int index  = batchJob.index;
+        int length = batchJob.files.length;
+
+        if (index == length){
+            batchJob.active = false;
+            System.out.println("Batch job finished.");
+        } else {
+
+            System.out.print("Starting DE optimization " + (index + 1) + " of " + length + " (");
+
+            //Load spectrum
+            File file = batchJob.files[index];
+            System.out.println(file.getName() + ").");
+            readDataFile(IBC_RBS,file);
+            spectraPlotWindow.setTitle("Spectra - " + file.getName() + " - Batch " + (index+1) + " of " + length);
+
+            //start DE
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            doGASimulation();
+        }
+    }
+
+    private void writeBatchResults(){
+
+        int index  = batchJob.index;
+        int length = batchJob.files.length;
+
+        System.out.println("Finished DE optimization " + (index + 1) + " of " + length + ".");
+
+        File file = batchJob.files[index];
+        String name = file.getName();
+
+        String batchFolder = batchJob.batchFolder;
+        String sampleFolder = batchFolder + "/" + name.substring(0,name.lastIndexOf('.'));
+        try {
+            Files.createDirectories(Paths.get(sampleFolder));
+            File rawDataFile = new File(sampleFolder,name);
+            Files.copy(file.toPath(), rawDataFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+        String simulationFileName = name.substring(0,name.lastIndexOf('.')) + "_Simulation.json";
+        File simulationFile = new File(sampleFolder, simulationFileName);
+        saveSimulation(simulationFile);
+
+        String reportFileName = name.substring(0,name.lastIndexOf('.')) + ".html";
+        File reportFile = new File(sampleFolder, reportFileName);
+        reportGenerator.sampleName = name.substring(0,name.lastIndexOf('.'));
+        saveReport(false, true, reportFile);
+
+        System.out.println("");
+        batchJob.index++;
+    }
+
+
 
     private void makeExpSpectrum() {
 
@@ -1567,7 +1680,7 @@ public class MainWindow extends JFrame implements Observer {
 
     private void initComponents() {
 
-        this.setTitle("Ruthelde V8.08 - 2025_11_20 (C) R. Heller");
+        this.setTitle("Ruthelde V8.09 - 2025_12_17 (C) R. Heller");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(rootPanel);
         pack();
@@ -2041,8 +2154,12 @@ public class MainWindow extends JFrame implements Observer {
         miscMenu.add(itemKinematics);
 
         JMenuItem itemReport = new JMenuItem("Generate Report");
-        itemReport.addActionListener(e -> saveReport());
+        itemReport.addActionListener(e -> saveReport(true,true,null));
         miscMenu.add(itemReport);
+
+        JMenuItem itemBatch = new JMenuItem("Batch Analysis");
+        itemBatch.addActionListener(e -> startBatch());
+        //miscMenu.add(itemBatch);
 
         jmb.add(miscMenu);
 

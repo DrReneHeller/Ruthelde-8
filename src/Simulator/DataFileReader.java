@@ -20,14 +20,16 @@ public class DataFileReader {
                 inputBuffer = new BufferedReader(new FileReader(file));
 
                 while ((currentLine = inputBuffer.readLine()) != null) {
-                    spectrum.add(Double.parseDouble(currentLine));
+                    if (Character.isDigit(currentLine.charAt(0))) spectrum.add(Double.parseDouble(currentLine));
                 }
 
                 result = new double[spectrum.size()];
                 for (int i= 0; i < spectrum.size(); i++) result[i] = spectrum.get(i);
                 inputBuffer.close();
             }
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            System.out.println("Error parsing ASCII data file.");
+        }
 
         return result;
     }
