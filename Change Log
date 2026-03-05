@@ -26,3 +26,16 @@
 #### V8.07
 
 - 2025_07_16: Changed cross section file handling
+
+#### V8.08
+
+- 2025_11_16: Changed format of stopping cross-section file
+
+#### V8.09
+
+- 2025_12_17: Single Line ASCII file import now supports MPA files
+
+#### V8.10
+
+- 2026_03_05: Enabled free input for exit angle (beta) and thus allow for use of none IBM geometries
+

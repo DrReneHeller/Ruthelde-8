@@ -106,9 +106,15 @@ public class ExperimentalSetup implements Serializable {
             double temp_beta = Math.abs(180.0d - alpha - theta);
 
             if (temp_beta < 90.0d) {
-                this.theta =theta;
+                this.theta = theta;
                 this.beta = temp_beta;
             }
+        }
+    }
+
+    public void setBeta(double beta) {
+        if (true) { //TODO: Should beta be restricted?
+            this.beta = beta;
         }
     }
 

@@ -1286,6 +1286,25 @@ public class MainWindow extends JFrame implements Observer {
         blockEvents = false;
     }
 
+    private void setExpBeta() {
+
+        double oldBeta = experimentalSetup.getBeta();
+        double beta;
+        try {
+            beta = Double.parseDouble(tFExpBeta.getText());
+            if (beta != oldBeta) {
+                experimentalSetup.setBeta(beta);
+                updateOpenPlotWindows();
+            }
+        } catch (NumberFormatException ex) {
+        }
+
+        blockEvents = true;
+        beta = experimentalSetup.getBeta();
+        tFExpBeta.setText(Helper.dblToDecStr(beta, 2));
+        blockEvents = false;
+    }
+
     private void updateChargeValues() {
         double charge = experimentalSetup.getCharge();
         double minCharge = experimentalSetup.getMinCharge();
@@ -1680,7 +1699,7 @@ public class MainWindow extends JFrame implements Observer {
 
     private void initComponents() {
 
-        this.setTitle("Ruthelde V8.09 - 2025_12_17 (C) R. Heller");
+        this.setTitle("Ruthelde V8.10 - 2026_03_05 (C) R. Heller");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(rootPanel);
         pack();
@@ -1822,6 +1841,17 @@ public class MainWindow extends JFrame implements Observer {
         });
 
         tfExpTheta.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (!blockEvents) setExpBeta();
+            }
+        });
+
+        tFExpBeta.addActionListener(e -> {
+            if (!blockEvents) setExpBeta();
+        });
+
+        tFExpBeta.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 if (!blockEvents) setExpTheta();
@@ -2159,7 +2189,7 @@ public class MainWindow extends JFrame implements Observer {
 
         JMenuItem itemBatch = new JMenuItem("Batch Analysis");
         itemBatch.addActionListener(e -> startBatch());
-        //miscMenu.add(itemBatch);
+        miscMenu.add(itemBatch);
 
         jmb.add(miscMenu);
 

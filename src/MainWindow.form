@@ -581,7 +581,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                 </properties>
               </component>
               <component id="3fcbd" class="javax.swing.JLabel">
