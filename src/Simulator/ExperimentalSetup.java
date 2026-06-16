@@ -169,6 +169,7 @@ public class ExperimentalSetup implements Serializable {
         result.setDeltaE0(this.deltaE0);
         result.setAlpha(this.alpha);
         result.setTheta(this.theta);
+        result.setBeta(this.beta); // Just in case for arbitrary geometries
         result.setCharge(this.charge);
         result.setMinCharge(this.minCharge);
         result.setMaxCharge(this.maxCharge);

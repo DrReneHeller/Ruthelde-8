@@ -39,3 +39,6 @@
 
 - 2026_03_05: Enabled free input for exit angle (beta) and thus allow for use of none IBM geometries
 
+#### V8.11
+
+- 2026_06_16: Fixed issue with exit angle (beta) adjustment in DE simulation

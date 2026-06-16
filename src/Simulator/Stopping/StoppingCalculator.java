@@ -180,6 +180,8 @@ final public class StoppingCalculator {
             double _a2 = paraFile.parameters[Z2].params[5];
             double _a3 = paraFile.parameters[Z2].params[6];
 
+            //System.out.println("f1=" + _f1 + ", s=" + _s + ", p=" + _p);
+
             double _f2 = paraFile.parameters[Z2].params[7];
             double _q  = paraFile.parameters[Z2].params[8];
             double _r  = paraFile.parameters[Z2].params[9];
@@ -190,10 +192,10 @@ final public class StoppingCalculator {
 
             double EM = E0 / (M1*1000.0d);
 
-            double s1 = _f1 * Math.pow(EM, _s) * Math.log(2.7183d + _p * EM);
+            double s1 = _f1 * Math.pow(EM, _s) * Math.log(Math.E + _p * EM);
             s1 /= _a0 +  _a1 * Math.pow(EM, 0.25d) + _a2 * Math.pow(EM, 0.5d) + _a3 * Math.pow(EM, 1.0d+_s);
 
-            double s2 = _f2 * Math.pow(EM, _q) * Math.log(2.7183d + _r * EM);
+            double s2 = _f2 * Math.pow(EM, _q) * Math.log(Math.E + _r * EM);
             s2 /= _b0 +  _b1 * Math.pow(EM, 0.25d) + _b2 * Math.pow(EM, 0.5d) + _b3 * Math.pow(EM, 1.0d+_q);
 
             result = s1 + s2;
